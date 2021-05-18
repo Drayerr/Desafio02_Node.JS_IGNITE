@@ -16,7 +16,7 @@ function checksExistsUserAccount(request, response, next) {
 
   if (user) {
     request.user = user
-    next()
+    return next()
   } else {
     return response.status(404).json({ error: "User not found!" })
   }
@@ -26,14 +26,14 @@ function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request
 
   if (user.pro === true) {
-    next()
+    return next()
   }
 
   if (user.todos.length <= 9) {
-    next()
+    return next()
   }
 
-  return response.status(403)
+  return response.status(403).json({error: "Foda"})
 }
 
 function checksTodoExists(request, response, next) {
@@ -42,28 +42,23 @@ function checksTodoExists(request, response, next) {
 
   let isuuid = validate(id)
   if (isuuid === false) {
-    return response.status(400)
+    return response.status(400).json({error: "Foda"})
   }
 
   const user = users.find(user => user.username === username)
   if (!user) {
-    return response.status(404)
-  }
-
-  isuuid = validate(user.id)
-  if (isuuid === false) {
-    return response.status(400)
+    return response.status(404).json({error: "Foda"})
   }
 
   const todo = user.todos.find(todo => todo.id === id)
   if (!todo) {
-    return response.status(404)
+    return response.status(404).json({error: "Foda"})
   }
 
   request.user = user
   request.todo = todo
   
-  next()
+  return next()
 }
 
 function findUserById(request, response, next) {
@@ -73,7 +68,7 @@ function findUserById(request, response, next) {
 
   if (user) {
     request.user = user
-    next()
+    return next()
   } else {
     return response.status(404).json({ error: "User not found!" })
   }
